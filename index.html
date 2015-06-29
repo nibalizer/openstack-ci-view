@@ -80,7 +80,7 @@ H2 { text-align: center }
 
 <div class="container">
   <div class="page-header"> </div>
-  <div class="panel panel-default">
+  <div class="panel panel-default" id="main-box">
     <div id="test-selection-heading" class="panel-heading"> Test To Analyze</div>
       <div id="test-selection-body" class="panel-body ">
         <div class="input-group">
@@ -92,9 +92,15 @@ H2 { text-align: center }
       </div>
     </div>
     <div class="panel panel-default">
-      <div id="revisions-list-heading" class="panel-heading"> Test Success/Failure (7 Days)</div>
+      <div id="revisions-list-heading" class="panel-heading"> Check Test Success/Failure (7 Days)</div>
       <div id="revisions-list-body" class="panel-body ">
-        <img id="graph">
+        <img id="graph-check">
+      </div>
+    </div>
+    <div class="panel panel-default">
+      <div id="revisions-list-heading" class="panel-heading"> Gate Test Success/Failure (7 Days)</div>
+      <div id="revisions-list-body" class="panel-body ">
+        <img id="graph-gate">
       </div>
     </div>
 </div>
@@ -117,11 +123,10 @@ $( document ).ready(function() {
   });
 });
 $("#testnameSelect").click(function() {
+  $("#main-box").append
   var testname = $('#testname').val();
-  console.log(testname);
   var targetname = "stats.zuul.pipeline.check.job." + testname + ".*";
-  console.log(targetname);
-  $("#graph").graphite({
+  $("#graph-check").graphite({
       url: "http://graphite.openstack.org/render/",
       from: "-7days",
       colorList: "red,blue,green,orange",
@@ -129,6 +134,16 @@ $("#testnameSelect").click(function() {
           targetname,
       ],
       title: "PASS/FAIL in Check"
+  });
+  targetname = "stats.zuul.pipeline.gate.job." + testname + ".*";
+  $("#graph-gate").graphite({
+      url: "http://graphite.openstack.org/render/",
+      from: "-7days",
+      colorList: "red,blue,green,orange",
+      target: [
+          targetname,
+      ],
+      title: "PASS/FAIL in Gate"
   });
 
 });
