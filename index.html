@@ -92,6 +92,14 @@ H2 { text-align: center }
       </div>
     </div>
     <div class="panel panel-default">
+      <div id="revisions-list-heading" class="panel-heading"> Check Test Numeric (7 Days)</div>
+      <div id="revisions-list-body" class="panel-body ">
+        <table class="table" id="stattable">
+          <tr><th>Stat</th><th>Value</th></tr>
+        </table>
+      </div>
+    </div>
+    <div class="panel panel-default">
       <div id="revisions-list-heading" class="panel-heading"> Check Test Success/Failure (7 Days)</div>
       <div id="revisions-list-body" class="panel-body ">
         <img id="graph-check">
@@ -146,6 +154,35 @@ $("#testnameSelect").click(function() {
       title: "PASS/FAIL in Gate"
   });
 
+  var jsonurl = "http://graphite.openstack.org/render/?from=-7days&target=stats.zuul.pipeline.check.job." + testname +".*&format=json";
+  $.getJSON( jsonurl, function( data ) {
+     var passes = data[2]['datapoints']
+     var fails = data[0]['datapoints']
+     var pass_total = 0;
+     var fail_total = 0;
+     $.each(passes, function( point ) {
+        value = passes[point][0]
+        if (value != 0) {
+          pass_total += value
+        }
+     });
+     $.each(fails, function( point ) {
+        value = fails[point][0]
+        if (value != 0) {
+          fail_total += value
+        }
+     });
+     var pass_count = parseInt(pass_total / 0.016, 10);
+     var fail_count = parseInt(fail_total / 0.016, 10);
+     var total_count = parseInt(pass_count + fail_count, 10);
+     var percent_pass = parseInt(pass_count/total_count * 100, 10);
+     $('#stattable tr').empty();
+     $('#stattable tr:last').after('<tr><td>' + "Pass Percentage" +  '</td><td>' + percent_pass + '</td></tr>');
+     $('#stattable tr:last').after('<tr><td>' + "Total Jobs" +  '</td><td>' + total_count + '</td></tr>');
+     $('#stattable tr:last').after('<tr><td>' + "Passed Jobs" +  '</td><td>' + pass_count + '</td></tr>');
+     $('#stattable tr:last').after('<tr><td>' + "Failed Jobs" +  '</td><td>' + fail_count + '</td></tr>');
+
+  });
 });
 
 </script>
