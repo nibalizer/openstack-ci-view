@@ -101,7 +101,7 @@ $("#testnameSelect").click(function() {
   $("#graph-check-panel").remove();
   $("#main-box").after('\
     <div id="graph-check-panel" class="panel panel-default">\
-      <div id="revisions-list-heading" class="panel-heading"> Check Test Numeric (7 Days)</div>\
+      <div id="revisions-list-heading" class="panel-heading"> Check Test Graph (7 Days)</div>\
       <div id="revisions-list-body" class="panel-body ">\
         <img id="graph-check">\
       </div>\
@@ -109,7 +109,7 @@ $("#testnameSelect").click(function() {
   $("#graph-gate-panel").remove();
   $("#main-box").after('\
     <div id="graph-gate-panel" class="panel panel-default">\
-      <div id="revisions-list-heading" class="panel-heading"> Check Test Numeric (7 Days)</div>\
+      <div id="revisions-list-heading" class="panel-heading"> Gate Test Graph (7 Days)</div>\
       <div id="revisions-list-body" class="panel-body ">\
         <img id="graph-gate">\
       </div>\
@@ -169,10 +169,7 @@ $("#testnameSelect").click(function() {
      var fail_count = parseInt(fail_total / 0.016, 10);
      var total_count = parseInt(pass_count + fail_count, 10);
      var percent_pass = parseInt(pass_count/total_count * 100, 10);
-     $('<tr><td>' + "Pass Percentage" +  '</td><td>' + percent_pass + '</td></tr>').appendTo("#stattable");
-     //$('#stattable tr:last').after('<tr><td>' + "Total Jobs" +  '</td><td>' + total_count + '</td></tr>');
-     //$('#stattable tr:last').after('<tr><td>' + "Passed Jobs" +  '</td><td>' + pass_count + '</td></tr>');
-     //$('#stattable tr:last').after('<tr><td>' + "Failed Jobs" +  '</td><td>' + fail_count + '</td></tr>');
+     $('<tr><td>' + "Pass Percentage (check only)" +  '</td><td>' + percent_pass + '</td></tr>').appendTo("#stattable");
 
   });
 });
