@@ -91,47 +91,30 @@ H2 { text-align: center }
         </div><!-- /input-group -->
       </div>
     </div>
-    <div class="panel panel-default">
-      <div id="revisions-list-heading" class="panel-heading"> Check Test Numeric (7 Days)</div>
-      <div id="revisions-list-body" class="panel-body ">
-        <table class="table" id="stattable">
-          <tr><th>Stat</th><th>Value</th></tr>
-        </table>
-      </div>
-    </div>
-    <div class="panel panel-default">
-      <div id="revisions-list-heading" class="panel-heading"> Check Test Success/Failure (7 Days)</div>
-      <div id="revisions-list-body" class="panel-body ">
-        <img id="graph-check">
-      </div>
-    </div>
-    <div class="panel panel-default">
-      <div id="revisions-list-heading" class="panel-heading"> Gate Test Success/Failure (7 Days)</div>
-      <div id="revisions-list-body" class="panel-body ">
-        <img id="graph-gate">
-      </div>
-    </div>
 </div>
 
 <script>
 $( document ).ready(function() {
-  //write out the list of revisions
   $('#testname').val('gate-infra-puppet-apply-centos6');
-  $("#graph").graphite({
-      url: "http://graphite.openstack.org/render/",
-      from: "-7days",
-      colorList: "red,green,blue,orange,yellow,magenta,purple",
-      target: [
-         "stats.zuul.pipeline.gate.job.gate-infra-puppet-apply-centos6.FAILURE",
-         "stats.zuul.pipeline.gate.job.gate-infra-puppet-apply-centos6.SUCCESS",
-         "stats.zuul.pipeline.check.job.gate-infra-puppet-apply-centos6.SUCCESS",
-         "stats.zuul.pipeline.check.job.gate-infra-puppet-apply-centos6.FAILURE",
-      ],
-      title: "Centos6 PASS/FAIL in Check"
-  });
 });
 $("#testnameSelect").click(function() {
-  $("#main-box").append
+  $("#graph-check-panel").remove();
+  $("#main-box").after('\
+    <div id="graph-check-panel" class="panel panel-default">\
+      <div id="revisions-list-heading" class="panel-heading"> Check Test Numeric (7 Days)</div>\
+      <div id="revisions-list-body" class="panel-body ">\
+        <img id="graph-check">\
+      </div>\
+    </div>');
+  $("#graph-gate-panel").remove();
+  $("#main-box").after('\
+    <div id="graph-gate-panel" class="panel panel-default">\
+      <div id="revisions-list-heading" class="panel-heading"> Check Test Numeric (7 Days)</div>\
+      <div id="revisions-list-body" class="panel-body ">\
+        <img id="graph-gate">\
+      </div>\
+    </div>');
+
   var testname = $('#testname').val();
   var targetname = "stats.zuul.pipeline.check.job." + testname + ".*";
   $("#graph-check").graphite({
@@ -153,6 +136,16 @@ $("#testnameSelect").click(function() {
       ],
       title: "PASS/FAIL in Gate"
   });
+
+  $("#stat-panel").remove();
+  $("#main-box").after('\
+    <div id="stat-panel" class="panel panel-default">\
+      <div id="revisions-list-heading" class="panel-heading"> Check Test Numeric (7 Days)</div>\
+      <div id="revisions-list-body" class="panel-body ">\
+        <table class="table" id="stattable">\
+        </table>\
+      </div>\
+    </div>');
 
   var jsonurl = "http://graphite.openstack.org/render/?from=-7days&target=stats.zuul.pipeline.check.job." + testname +".*&format=json";
   $.getJSON( jsonurl, function( data ) {
@@ -176,11 +169,10 @@ $("#testnameSelect").click(function() {
      var fail_count = parseInt(fail_total / 0.016, 10);
      var total_count = parseInt(pass_count + fail_count, 10);
      var percent_pass = parseInt(pass_count/total_count * 100, 10);
-     $('#stattable tr').empty();
-     $('#stattable tr:last').after('<tr><td>' + "Pass Percentage" +  '</td><td>' + percent_pass + '</td></tr>');
-     $('#stattable tr:last').after('<tr><td>' + "Total Jobs" +  '</td><td>' + total_count + '</td></tr>');
-     $('#stattable tr:last').after('<tr><td>' + "Passed Jobs" +  '</td><td>' + pass_count + '</td></tr>');
-     $('#stattable tr:last').after('<tr><td>' + "Failed Jobs" +  '</td><td>' + fail_count + '</td></tr>');
+     $('<tr><td>' + "Pass Percentage" +  '</td><td>' + percent_pass + '</td></tr>').appendTo("#stattable");
+     //$('#stattable tr:last').after('<tr><td>' + "Total Jobs" +  '</td><td>' + total_count + '</td></tr>');
+     //$('#stattable tr:last').after('<tr><td>' + "Passed Jobs" +  '</td><td>' + pass_count + '</td></tr>');
+     //$('#stattable tr:last').after('<tr><td>' + "Failed Jobs" +  '</td><td>' + fail_count + '</td></tr>');
 
   });
 });
